@@ -1,0 +1,58 @@
+@charset "UTF-8";
+*{margin:0px; padding:0px;}
+a{text-decoration: none;}
+li{list-style:none;}
+ /* 최상단 로그인 */
+.top-menu-nav{width:100%; min-width:1400px; overflow:hidden;}
+#top-div{width:1400px; height:50px; position:relative; margin:0 auto;}
+#top-info{line-height:50px;	position: relative; left: 1000px;}
+#top-info>li{float:left; padding:0 10px;}
+#top-info>li:last-child{padding:0 0 0 30px;}
+#top-info>li:last-child> a:hover{color:red;	font-weight:600;}
+.headerCon{width:1400px; margin:0 auto;}
+.logoimg{/*로고이미지*/
+	float:left;
+	width:170px;
+	height:80px;
+	margin-top:20px;
+	padding-left: 20px;
+}
+
+/*   메뉴 박스상자배경  */
+#menu-bg{position:absolute; min-width:1400px; width:100%; height:260px; background:white;
+	top:120px; display:none; z-index:100; box-shadow: 0px 26px 19px 0px rgb(120 120 120 / 10%) border-top: 1px solid gray;}
+
+/*  상단 메뉴바  */
+.headerCon .header{width:1400px; position:absolute;z-index:100; overflow:hidden;}
+.headerCon .nav{line-height: 100px; position:relative;left:18%;z-index:100;}
+.headerCon .nav >li{text-align:center;float:left;width: 13%;}
+.headerCon .nav >li>a{color:black;font-size:1.3em;cursor:pointer; font-weight:500;}
+.headerCon .nav >li>a:hover{font-size:1.5em;font-weight:600;}
+
+/* 드롭다운메뉴 서브메뉴 */
+.headerCon .nav .sublist>li{margin-top: -30px; text-align:center; height:100px;}
+.headerCon .nav .sublist{height:220px; display:none;}
+.headerCon .nav .sublist>li>a{color:black;}
+.headerCon .nav .sublist>li>a:hover{color:black; font-size:1.1em; font-weight:600;}
+
+/* 메인컨텐츠와 높이조절용 */	
+.menu-top-div{height:70px;}
+
+/* 메인메뉴 타이틀 */
+	/* 상단 페이지 제목 */
+	.notice-con{width:1400px; margin:50px auto 0;}
+	.page-main-notice{text-align:center;}
+	.page-main-notice>h3{font-size:2em; color:#333; font-weight:700; margin-bottom:20px;}
+	.page-main-notice>p{font-size:1em;}
+	.page-main-notice>p:after{display:block; width:35px; border-bottom:2px solid rgb(0, 128, 192); content:''; margin:20px auto 0;}
+
+/* 화면설명 드롭메뉴 아래 이미지와 네비바*/
+.top-banner-nav a{color:gray}
+a:link, a:hover a:visited{text-decoration: none;}
+/* button{background-color:white;cursor:pointer;}   */ 
+/*상단 이미지와 네비바 */
+.top-banner-imgCon{background:url(https://www.baristapaulbassett.co.kr/images/whatsnew/eventSubVisual.jpg) no-repeat center; background-size:cover;
+					height:250px;position:relative; min-width:1400px; overflow:hidden;}   
+.top-banner-imgCon .headerText{width:1400px;font-size:3em;color:white;z-index:100;opacity:1; margin:90px auto 0;text-align:center;}
+.top-banner-nav{display:flex;justify-content:center;width:100%;border-bottom:1px solid gray;}
+.top-banner-nav>div{padding:15px 40px;}	

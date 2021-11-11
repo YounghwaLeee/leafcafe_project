@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.leaf.myapp.dao.SirenDAO">
+  	<select id="setSirenList" resultType="com.leaf.myapp.vo.MenuVO">
+  		SELECT p_name,p_ename,p_price,m_code,p_num,p_img FROM menu WHERE m_code NOT IN ('product')
+  	</select>
+  	<select id="sirenRegData" parameterType="String" resultType="com.leaf.myapp.vo.RegisterVO">
+  		select userid, username from registers where username=#{logname}
+  	</select>
+  	<insert id="addOrderTbl" parameterType="com.leaf.myapp.vo.SirenCartVO" >
+  		insert into order1(od_num,p_num,od_cnt,fc_num,userid,od_price) values(ordersq.nextval,#{p_num},#{od_cnt},#{fc_num},#{userid},#{od_price})
+  	</insert>
+  	<select id="fcList" resultType="com.leaf.myapp.vo.FranVO">
+  		select fc_num,fc_name,fc_addr,fc_img from franchise order by fc_num desc
+  	</select>
+  </mapper>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+       <title>chat_client</title>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+       <script src="/socket.io/socket.io.js"></script>
+       <script>
+           var socket;
+           $(()=>{
+               //1. 서버에 접속한다.
+                socket = io.connect();//서버에 접속시도
+                socket.emit('join','room1');
+                //2. 클라이언트가 서버로 문자 보내기
+                socket.emit('hello','<li id="admin">안녕하세요! <br/>순차적으로 답변을 드릴 예정입니다.<br/> 소중한 문의 <br/>잠시만 기다려주세요! </li>')
+                //3. 서버가 보낸 문자 받는 이벤트
+                socket.on('echo', function(msg){
+                    $("#chatMessage").append(msg+"</li><br/>");
+                });
+                socket.on('response',function(msg){
+                    $('#chatMessage').append(msg+"</li><br/>");
+                    $('#chatMessage').scrollTop($('#chatMessage')[0].scrollHeight);
+                });
+                
+                $("#msg").keyup(function(event){
+                    if(event.keyCode==13){
+                        messageSend();
+                    };
+                });
+                function messageSend(){
+                    if($('#msg').val()!=''){
+                        socket.emit('cMessage', $("#msg").val());
+                        $("#msg").val("");
+                        $("#msg").focus();
+                        $('#chatMessage').scrollTop($('#chatMessage')[0].scrollHeight);
+                    }else{
+                        alert('메세지를 입력하세요');
+                    };
+
+                };
+                
+           });
+
+       </script>
+<style>
+    body{
+        font-size:0.8rem;
+    }
+    ul{
+        list-style: none;
+        padding:0;
+    }
+    li{
+        padding: 6px;
+        border-radius: 5px;
+        width: fit-content;}
+    #chatMessage{
+        width: 345px;
+        height: 310px;
+        overflow: auto;
+       
+    }
+    #chatMessage::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera*/
+    }
+    #inputMessage{
+        position: fixed;
+        bottom: 5px;
+    }
+    #msg{
+        height: 45px;
+        width: 325px;
+        padding-left: 10px;
+        border-radius: 13px;
+        border: none;
+        background: white;
+    }
+    #msg:focus{
+        outline: none;
+    }
+    #admin{background: white;}
+    #user{background:rgb(242,220,1); float: right;;
+        }
+    #chatUser{
+        padding-left: 300px;
+        margin-top: 20px;
+        background: lightblue;
+    }
+    #chatAdmin{
+        background: lightblue;
+    }
+</style>
+    </head>
+    <body>
+        
+        <!-- 서버에서 받은 메시지 표시 -->
+        <div ><ul id ="chatMessage"></ul></div>
+        <div id="inputMessage">
+            <input type="text" autocomplete="off" id="msg" placeholder="메세지를 입력해주세요"/>
+                      
+        </div>
+    </body>
+</html>

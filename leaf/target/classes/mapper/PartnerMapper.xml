@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leaf.myapp.dao.PartnerDAO">
+	<select id="checkJoinId" resultType="com.leaf.myapp.vo.PartnerVO">
+		select nvl(emp.userid,0) nullid ,reg.tel,reg.email,reg.username, reg.userid userid from registers reg
+		left join Partner2 emp
+		on reg.userid = emp.userid
+		where reg.userid= #{param1}		
+	</select>
+	<select id="page" resultType="com.leaf.myapp.vo.PageVO">
+		select count(part_num) totalRecord from partner 
+		<if test='param2 !=null and param2 !=""'>	
+		where ${param1} like '%'||#{param2}||'%'
+		</if>		 
+	</select> 
+	<select id="searchPartnerList" resultType="com.leaf.myapp.vo.PartnerVO" parameterType="com.leaf.myapp.vo.PageVO">		
+		select * from
+			(select * from
+		   		(select part_num, part_company, part_name,part_tel,part_email,part_code_name, to_char(part_regdate,'YYYY-MM-DD') part_regdate			
+		   		from partner 	
+				<if test='searchWord!="" and searchKey!=""'>    		
+				where ${searchKey} like '%${searchWord}%'			
+				</if>			
+				order by part_num desc)			
+				where rownum<![CDATA[<=]]>	${rnChange} order by part_num asc) 
+		where rownum<![CDATA[<=]]>	${onePageRecord} order by part_num desc						
+	</select>	
+ 	<insert id="partnerRegiInsert" parameterType="com.leaf.myapp.vo.PartnerVO">
+		insert into Partner(part_num, part_company, part_name,part_tel,part_email,part_code_name)
+		values(partner_sq.nextval,#{part_company},#{part_name},#{part_tel},#{part_email},#{part_code_name})
+	</insert>
+	<select id="partnerChangeInfo" parameterType="int" resultType="com.leaf.myapp.vo.PartnerVO">
+		select part_num, part_company, part_name, part_tel,part_email,part_code_name, to_char(part_regdate,'YYYY-MM-DD') part_regdate			
+		   		from partner
+		where part_num = #{part_num}
+	</select>
+	<update id="partnerChangeResult" parameterType="com.leaf.myapp.vo.PartnerVO">
+		update Partner set part_name=#{part_name}, part_tel = #{part_tel}, part_email=#{part_email}, part_code_name=#{part_code_name}, part_company=#{part_company} where part_num = #{part_num}
+	</update>
+</mapper>

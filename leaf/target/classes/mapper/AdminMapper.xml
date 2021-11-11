@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leaf.myapp.dao.AdminDAO">
+	<select id="TotalFran" resultType="Integer">
+		select count(fc_num) TotalFran from franchise
+	</select>
+	<select id="TotalManage" resultType="Integer">
+		select count(userid) TotalManage from registers where auth not in 'member'
+	</select>
+	<select id="TotalRegi" resultType="Integer">
+		select count(userid) TotalRegi from registers
+	</select>
+	<select id="TotalSales" resultType="Integer">
+		select nvl(sum(menutotal),0) totalsales from 
+	    	(select o.p_num, o.od_cnt, m.p_price, m.p_name, (m.p_price*o.od_cnt)menutotal from order1 o
+	    	join menu m
+	    	on m.p_num = o.p_num)
+	</select>
+</mapper>

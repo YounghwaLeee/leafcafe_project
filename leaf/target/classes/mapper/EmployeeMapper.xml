@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leaf.myapp.dao.EmployeeDAO">
+	<select id="checkJoinId" resultType="com.leaf.myapp.vo.EmployeeVO">
+		select nvl(emp.userid,0) nullid ,reg.tel,reg.email,reg.username, reg.userid userid from registers reg
+		left join employee2 emp
+		on reg.userid = emp.userid
+		where reg.userid= #{param1}		
+	</select>
+	<select id="page" resultType="com.leaf.myapp.vo.PageVO">
+		select count(emp_num) totalRecord from registers regi join employee2 emp
+			on regi.userid = emp.userid
+		join department2 dept
+			on emp.dept_num = dept.dept_num
+		<if test='param2 !=null and param2 !=""'>	
+		where ${param1} like '%'||#{param2}||'%'
+		</if>		 
+	</select> 
+	<select id="searchEmployeeList" resultType="com.leaf.myapp.vo.EmployeeVO" parameterType="com.leaf.myapp.vo.PageVO">		
+		select * from
+			(select * from
+		   		(select emp.emp_num, regi.username, dept.dept_name, emp.emp_posi, regi.tel, regi.email, to_char(emp.emp_regdate,'YYYY-MM-DD') emp_regdate , emp.emp_status
+				from registers regi join employee2 emp
+				    on regi.userid = emp.userid
+				join department2 dept
+				    on emp.dept_num = dept.dept_num	
+				<if test='searchWord!="" and searchKey!=""'>    		
+				where ${searchKey} like '%${searchWord}%'			
+				</if>			
+				order by emp_num desc)			
+				where rownum<![CDATA[<=]]>	${rnChange} order by emp_num asc) 
+		where rownum<![CDATA[<=]]>	${onePageRecord} order by emp_num desc						
+	</select>	
+ 	<insert id="employeeRegiInsert" parameterType="com.leaf.myapp.vo.EmployeeVO">
+		insert into employee2(emp_num,dept_num,emp_posi,emp_regdate,userid,emp_status)
+		values(empSq.nextval,#{dept_num},#{emp_posi},#{emp_regdate},#{userid},'Y')
+	</insert>
+	<select id="employeeChangeInfo" parameterType="int" resultType="com.leaf.myapp.vo.EmployeeVO">
+		select emp.emp_num, regi.username, regi.tel, regi.email, dept.dept_num, dept.dept_name, emp.emp_posi, to_char(emp.emp_regdate,'YYYY-MM-DD') emp_regdate
+		from registers regi join employee2 emp
+   			on regi.userid = emp.userid
+		join department2 dept 
+    		on emp.dept_num = dept.dept_num
+		where emp.emp_num = #{emp_num}
+	</select>
+	<update id="employeeChangeResult" parameterType="com.leaf.myapp.vo.EmployeeVO">
+		update employee2 set dept_num=#{dept_num}, emp_posi = #{emp_posi} where emp_num = #{emp_num}
+	</update>
+</mapper>

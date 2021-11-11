@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.leaf.myapp.dao.FranNoticeDAO">
+  	<!-- 글목록 -->
+  	<select id="noticeAllSelect" parameterType="com.leaf.myapp.vo.FranPageVO" resultType="com.leaf.myapp.vo.FranNoticeVO">
+  	select * from 
+		(select * from
+    		(select no, title, to_char(writedate, 'YY-MM-DD') writedate, hit, userid from frannotice 
+    		where title like '%${searchKeyword}%' or
+    		content like '%${searchKeyword}%' order by no desc)
+     where rownum<![CDATA[<=]]>#{nowPage}*#{OnePageRecord} order by no asc)
+     where rownum<![CDATA[<=]]>#{lastPage} order by no desc
+  	</select>
+  	<!-- 글내용등록 -->
+  	<insert id="franNoticeWriteOk" parameterType="com.leaf.myapp.vo.FranNoticeVO">
+  		insert into frannotice (no,userid,title,content)
+  		values (frannoticeSq.nextval,#{userid}, #{title},#{content})
+  	</insert>
+  	<!-- 글 내용보기 -->
+  	  <select  id="frannoticeDetail" resultType="com.leaf.myapp.vo.FranNoticeVO">
+        select no, title, content, to_char(writedate, 'YY-MM-DD') writedate, userid
+        from frannotice where no=#{no}
+     </select>
+     <update id="franNoticeEditOk" parameterType="com.leaf.myapp.vo.FranNoticeVO" >
+     	update frannotice set title=#{title}, content=#{content}
+     	where no=#{no} and userid=#{userid} 
+     </update>
+     <delete id="franNoticeDelete">
+     delete from frannotice where no=#{no} 	
+     </delete>
+     
+     <select id="totalRecordCount" parameterType="com.leaf.myapp.vo.FranPageVO" resultType="int">
+     select count(no) from frannotice
+     	<if test="searchKeyword !=null and searchKeyword !=''">
+     		where title like ('%${searchKeyword}%') or
+     		content like ('%${searchKeyword}%')
+	</if>
+  
+     </select>
+     <!-- 배열로 삭제 일단안됌  array가 어쩌고 저쩌고 ~-->
+      <delete id="delChk">
+     	delete from frannotice where no in
+     	<foreach item="item" index="index" collection="array"
+     	 open="(" separator="," close=")">
+        #{item}
+  		</foreach>
+     </delete>    
+  	</mapper>

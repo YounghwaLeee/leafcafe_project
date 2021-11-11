@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leaf.myapp.dao.OpenDAO">
+	<select id="openUserPageGoInfo" resultType="com.leaf.myapp.vo.OpenRequestVO">
+		select tel openhopetel, email from registers where userid=#{param1}
+	</select>
+	<insert id="openRequestInfo" parameterType="com.leaf.myapp.vo.OpenRequestVO">
+		insert into openQuestion(oq_num,openhopeaddr,content,writedate,userid,oq_status,openhopetel,openhopeemail)
+		values(opensq.nextval,#{openhopeaddr},#{content},sysdate,#{userid},'답변대기',#{openhopetel},#{openhopeemail})
+	</insert>
+	<select id="authOpenAccess" resultType="int" parameterType="String">
+		select nvl(max(dept_num),0) dept_num from employee2 where userid=#{param1}
+	</select>
+	<select id="openListpage" resultType="int">
+		select count(oq_num) totalRecord from openQuestion oq
+		join registers regi
+		on oq.userid = regi.userid
+		<if test='param2 !=null and param2 !=""'>	
+			where ${param1} like '%'||#{param2}||'%'
+		</if>
+		<if test='param3 == 1'>
+			and oq_status='답변대기'
+		</if>		 
+	</select>
+	<select id="searchOpenQuestionList" resultType="com.leaf.myapp.vo.OpenRequestVO" parameterType="com.leaf.myapp.vo.OpenPageVO">
+		select * from    
+    		(select * from 
+        		(select oq_num, content, regi.username ,to_char(writedate,'YYYY-MM-DD HH24:MI') writedate , oq_status from openQuestion oq
+        		join registers regi
+        		on regi.userid = oq.userid 
+        		<if test='searchWord!="" and searchKey!=""'>
+        			where ${searchKey} like '%${searchWord}%'        			
+        		</if>
+        		<if test= 'oq_status == 1'>
+					and oq_status='답변대기'
+				</if>
+        		order by oq_num desc)
+    			where rownum<![CDATA[<=]]> ${rnChange} order by oq_num asc)
+			where rownum<![CDATA[<=]]> ${onePageRecord} order by oq_num desc
+	</select>		
+	<select id="openReplyExist" resultType="com.leaf.myapp.vo.OpenRequestReplyVO">
+		select nvl(max(userid),'nouserid') userid, nvl(max(rpcon),'norpcon') rpcon from openreply where oq_num = #{param1}
+	</select>		
+	<select id="openReplyWriter" resultType="com.leaf.myapp.vo.OpenRequestReplyVO">
+		select nvl(max(regi.username),'nousername') username , nvl(max(rp.userid),'nosamereplyid') userid from registers regi
+		join openreply rp
+			on regi.userid = rp.userid
+		where rp.userid = #{param1} and rp.oq_num = #{param2}
+	</select>
+	<select id="openReplyLastDate" resultType="String">
+		select rpldate from openreply rp join openquestion oq 
+			on rp.oq_num = oq.oq_num
+		where rp.oq_num=#{param1}
+	</select>
+  	<select id="openBoardInfo" parameterType="int" resultType="com.leaf.myapp.vo.OpenRequestVO">
+		select regi.username,openhopeemail,openhopetel,openhopeaddr,to_char(writedate,'YYYY-MM-DD HH24:MI') writedate, content, oq_status,oq_num
+		from openquestion oq join registers regi
+			on regi.userid = oq.userid
+		where oq_num=${param1}		 
+	</select>
+	<insert id="openReplyWriteInsert" parameterType="com.leaf.myapp.vo.OpenRequestReplyVO">
+		insert into openReply(rp_num,rpdate,rpldate,rpcon,oq_num,userid)
+		values(rpsq.nextval,sysdate,sysdate,#{rpcon},#{oq_num},#{userid})
+	</insert>
+	<update id="openReplyWriteOk" parameterType="int">
+		update openquestion set oq_status='답변완료' where oq_num=#{param1}
+	</update>
+	<select id="openReplyEditNum" resultType="int">
+		select rp_num from openreply where oq_num=#{param1}
+	</select>
+	<update id="openReplyEdit">
+		update openreply set rpcon=#{param2}, rpldate=sysdate where rp_num=${param1}
+	</update>
+	<delete id="openReplyDelete" parameterType="int">
+		delete from openreply where rp_num=#{param1}
+	</delete>
+	<update id="openReplyDeleteResult" parameterType="int">
+		update openquestion set oq_status='답변대기' where oq_num=#{param1}
+	</update>
+</mapper>  

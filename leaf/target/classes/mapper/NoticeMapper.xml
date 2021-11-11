@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.leaf.myapp.dao.NoticeDAO">
+  	<select id="checkAuto" parameterType="String" resultType="String">
+  		select auth from registers where userid=#{userid}
+  	</select>
+  	<select id="noticeAllSelect" resultType="com.leaf.myapp.vo.NoticeVO">
+  		select no, title, to_char(writedate, 'YY-MM-DD') writedate, hit from notice order by no desc
+  	</select>
+  	<update id="hitCount">
+  		update notice set hit=hit+1 where no=#{no}
+  	</update>
+  	  <select  id="noticeView" resultType="com.leaf.myapp.vo.NoticeVO">
+   <!--     select no, title, content, userid, to_char(writedate, 'YY-MM-DD') writedate from notice where no=#{param1}  --> 
+    
+    	select * from(
+		select no, title, content, userid,n_img, to_char(writedate, 'YY-MM-DD') writedate,
+		lag(no) over(order by no) as prev,
+        lag(title) over(order by no) prev_title,
+        lead(no) over(order by no) as next,
+		lead(title) over(order by no) as next_title from notice)
+		where no=#{param1}
+     </select>
+     <insert id="noticeWrite" parameterType="com.leaf.myapp.vo.NoticeVO">
+     	insert into notice(no, title, content) 
+     	values(noticeSq.nextval, #{title}, #{content})
+     </insert>
+     <update id="noticeEdit" parameterType="com.leaf.myapp.vo.NoticeVO">
+     	update notice set title=#{title}, content=#{content} where no=#{no}
+     </update>
+     <delete id="noticeDel" >
+     	delete from notice where no=#{param1}
+     </delete>
+     <delete id="delChk">
+     	delete from notice where no in
+     	<foreach item="item" index="index" collection="array"
+     	 open="(" separator="," close=")">
+        #{item}
+  		</foreach>
+     </delete>
+     <select id="totalRecordCount" resultType="int" >
+     	select count(no) cnt from notice
+     	<if test='searchKeyword != null'>
+     		where title like ('%${searchKeyword}%') or
+     		content like ('%${searchKeyword}%')
+     	</if>
+     </select>
+	 <select id="noticePageSelect" resultType="com.leaf.myapp.vo.NoticeVO">     	 
+     	 select * from  
+	     	 	(select * from  
+			     	(select no, title, userid, hit, to_char(writedate,'YY-MM-DD') writedate 
+			                  from notice 
+				            
+				              	where title like '%${searchKeyword}%' or
+				              	content like '%${searchKeyword}%'              	
+				              
+				              order by no desc)
+			    where rownum<![CDATA[<=]]>#{nowPage}*#{pageRecord} order by no asc)
+		 where rownum<![CDATA[<=]]>#{pageRecord} order by no desc               
+     </select>
+  </mapper>

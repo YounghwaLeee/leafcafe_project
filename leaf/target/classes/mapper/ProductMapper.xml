@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+  
+<mapper namespace="com.leaf.myapp.dao.ProductDAO">
+	<!-- 발주페이지 제품리스트 -->
+	<select id="ProductList"  resultType="com.leaf.myapp.vo.ProductVO">
+		select DISTINCT i.hq_num, i.hq_name from items i join product h on i.hq_num = h.hq_num order by hq_num 
+		<!-- select hq_num, hq_name from items order by hq_num -->
+	</select>
+	<!-- 발주페이지 제품리스트(재고x) -->
+	<select id="NoProductList"  resultType="com.leaf.myapp.vo.ProductVO">
+		select i.hq_num, i.hq_name from items i full outer join product h on i.hq_num = h.hq_num where h.ware_num is null order by hq_num
+		<!-- select hq_num, hq_name from items order by hq_num -->
+	</select>
+	<!-- 발주시 제품클릭하면 파트너, 발주창 ajax-->	
+	<select id="ProductPartner" parameterType="int" resultType="com.leaf.myapp.vo.ProductVO">
+  		select h.hq_num, i.hq_name, i.ware_price, p.part_num, p.part_company, p.part_name, p.part_tel, p.part_email, p.part_code_name from product h join items i on i.hq_num = h.hq_num join partner p on i.part_num = p.part_num where h.hq_num=#{param1}
+  	</select>
+  	<select id="mypage" resultType="com.leaf.myapp.vo.ProductVO">
+		select f.fc_num, f.fc_name, f.fc_boss, f.fc_tel, r.userid from franchise f join registers r on f.userid=r.userid where r.userid=#{userid}
+	</select>
+  	 
+	<!-- 발주하기 -->	
+	<insert id="Purchase_RegisterOk" parameterType="com.leaf.myapp.vo.ProductVO">	
+		insert into purchase(pc_num, pc_cnt, hq_num, fc_num, order_status) values(purchase_sq.nextval, #{pc_cnt},#{hq_num},#{fc_num}, 1)
+	</insert>
+	<!-- 가맹점이 보는 발주리스트 (가맹점페이지) -->	
+	<select id="purchaseList" parameterType="String" resultType="com.leaf.myapp.vo.ProductVO">
+		select DISTINCT p.pc_num, h.hq_num, i.hq_name, i.ware_price,p.pc_cnt, p.pc_date, p.order_status, f.fc_name, f.fc_boss, f.fc_tel, r.userid from  product h join items i on i.hq_num = h.hq_num join purchase p on i.hq_num = p.hq_num join franchise f on f.fc_num= p.fc_num join registers r on r.userid=f.userid where r.userid=#{userid} order by p.pc_date desc
+	</select>
+	<!-- 본사가 보는 전체가맹점 발주리스트(본사페이지) -->	
+	<select id="purchaseListAll" resultType="com.leaf.myapp.vo.ProductVO">
+		select DISTINCT p.pc_num, f.fc_name, h.hq_num, i.hq_name, i.ware_price, p.pc_cnt, p.pc_date, p.order_status from product h join purchase p on p.hq_num = h.hq_num join franchise f on p.fc_num = f.fc_num join items i on i.hq_num = h.hq_num order by p.pc_num
+	</select>
+ 	<!-- 입고리스트 -->
+ 	<select id="WarehousingList" resultType="com.leaf.myapp.vo.ProductVO">
+		select h.ware_num, p.part_code_name, i.hq_name, i.ware_price, h.ware_cnt, p.part_name, p.part_company, p.part_tel, p.part_email, h.ware_date from product h join items i on i.hq_num = h.hq_num join partner p on i.part_num = p.part_num order by ware_num
+	</select>
+		<!-- merge into product 
+		using dual
+		<foreach item="item" index="index" collection="list" open="" separator="," close="">
+		on(trim(hq_num) =  #{hq_num})
+		</foreach>
+		when matched then 
+		update  set ware_cnt = ware_cnt +#{ware_cnt} where hq_num= #{hq_num}
+		when not matched then
+		insert(ware_num, hq_num,ware_price,ware_cnt,emp_num) values(product_sq.nextval, #{hq_num}, #{ware_price}, #{ware_cnt}, #{emp_num}) -->
+	<!-- 가맹점이 발주한거 리스트로 취소 -->
+	<!-- 유저아이디 나중에 넣어야함.... -->
+     <delete id="purchaseDel">
+        delete from purchase where pc_num in 
+        <foreach item="item" index="index" collection="list"
+         open="(" separator="," close=")">
+        #{item}
+        </foreach> 
+     </delete>
+     <update id="purchaseConfirm" parameterType="com.leaf.myapp.vo.ProductVO">
+     	update purchase set order_status = 2 where pc_num = #{pc_num}   
+     </update>
+    <!-- 
+     <update id="purchaseConfirmCnt" parameterType="com.leaf.myapp.vo.ProductVO">
+     	update product h 
+		set h.ware_cnt = 
+		(select h.ware_cnt from product h join  purchase pc on h.hq_num = pc.hq_num where h.hq_num=#{hq_num} )- (select pc.pc_cnt from purchase pc join  product h on h.hq_num = pc.hq_num where h.hq_num=#{hq_num})
+		where h.hq_num=#{hq_num}   
+     </update>
+      --> 
+     <!-- 재고리스트 -->
+ 	<select id="inventory" resultType="com.leaf.myapp.vo.ProductVO">
+		select i.hq_num, i.hq_name, i.ware_price, p.part_company, p.part_tel from items i join partner p on i.part_num = p.part_num order by hq_num 
+	</select>
+	<!-- 입고수량 합 -->
+	<select id="ware_cntAll" resultType="com.leaf.myapp.vo.ProductVO">
+		select NVL(SUM(ware_cnt),0) ware_cntAll from product where hq_num=#{hq_num}
+	</select>
+	<!--  발주수량 합 -->
+	<select id="pc_cntAll" resultType="com.leaf.myapp.vo.ProductVO">
+		select NVL(SUM(pc_cnt),0) pc_cntAll from purchase where hq_num=#{hq_num} and order_status = 2
+	</select>
+	
+	<!-- 입고등록-->
+	<insert id="Warehousing_RegisterOk" parameterType="com.leaf.myapp.vo.ProductVO">	
+		insert into product(ware_num, hq_num,ware_cnt) values(product_sq.nextval, #{hq_num}, #{ware_cnt})
+	</insert> 
+	<!-- 상품등록 -->
+	<insert id="items_RegisterOk" parameterType="com.leaf.myapp.vo.ProductVO">	
+		insert into items(hq_num, hq_name,ware_price, part_num) values(items_sq.nextval, #{hq_name}, #{ware_price}, #{part_num})
+	</insert> 
+	
+	<!-- 아이템목록 가져오기 -->
+	<select id="selectItems" resultType="com.leaf.myapp.vo.ProductVO">
+		select hq_num, hq_name, part_num from items
+	</select>	
+	<!-- 파트너목록 가져오기 -->
+	<select id="selectPartner" resultType="com.leaf.myapp.vo.ProductVO">
+		select part_num, part_name, part_company from partner
+	</select>	
+</mapper>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leaf.myapp.dao.AdminSalesDAO">
+	<select id="topTotalFran" resultType="Integer">
+		select count(fc_num) topTotalFran from franchise
+	</select>
+	<select id="topTotalBuyCnt" parameterType="String" resultType="Integer">
+		select count(od_num) topTotalBuyCnt from order1
+		where od_time
+		between to_date('${param1}','yyyy-mm-dd') and to_date('${param2}','yyyy-mm-dd')+1
+	</select>
+	<select id="topTotalBuyUser" parameterType="String" resultType="Integer">
+		select count(userid) topTotalBuyUser from
+    		(select userid from order1
+    		where od_time
+   			between to_date('${param1}','yyyy-mm-dd') and to_date('${param2}','yyyy-mm-dd')+1
+   	 	group by userid)
+	</select>
+	<select id="topTotalSales" parameterType="String" resultType="Integer">
+		select nvl(sum(menutotal),0) totalsales from 
+	    	(select o.p_num, o.od_cnt, m.p_price, m.p_name, (m.p_price*o.od_cnt)menutotal from order1 o
+	    	join menu m
+	    	on m.p_num = o.p_num
+	    	where od_time
+	    	between to_date('${param1}','yyyy-mm-dd') and to_date('${param2}','yyyy-mm-dd')+1    
+    	)
+	</select>
+	<!-- allproduct list -->
+	<select id="rankList" resultType="com.leaf.myapp.vo.SalesVO">
+		select rank() over (order by totalsales desc) rank, p_num, p_name, p_price, od_cnt, totalsales from
+	        (select p_num, p_name, p_price, sum(od_cnt) od_cnt ,sum(total) totalsales  from
+	            (select od.p_num , mu.p_name, p_price, od_cnt,(p_price*od_cnt) total
+	            from order1 od
+	            join menu mu
+	            on od.p_num = mu.p_num
+	            where od_time
+	            between to_date('${sdate}','yyyy-mm-dd') and to_date('${edate}','yyyy-mm-dd')+1)
+	        group by p_num, p_name, p_price)        
+	</select>	
+	<!-- allproduct totalrecord -->
+	<select id="totalRecordCnt" resultType="int">
+		select count(rank) from
+		    (select rank() over (order by totalsales desc) rank, p_num, p_name, p_price, od_cnt, totalsales from
+		        (select p_num, p_name, p_price, sum(od_cnt) od_cnt ,sum(total) totalsales  from
+		            (select od.p_num , mu.p_name, p_price, od_cnt,(p_price*od_cnt) total
+		            from order1 od
+		            join menu mu
+		            on od.p_num = mu.p_num
+		            where od_time
+		            between to_date('${sdate}','yyyy-mm-dd') and to_date('${edate}','yyyy-mm-dd')+1)
+		        group by p_num, p_name, p_price
+		        order by totalsales desc)
+		    )
+		    <if test='searchWord!="" and searchWord!=null'>
+		    	where p_name like '%${searchWord}%'
+		    </if>
+	</select>
+	<!-- allproduct pagelist -->
+	<select id="searchRankList" resultType="com.leaf.myapp.vo.SalesVO" parameterType="com.leaf.myapp.vo.AdminSalesPageVO">
+		select * from
+		    (select * from
+		        (select rank() over (order by totalsales desc) rank, p_num, p_name, p_price, od_cnt, totalsales from
+		            (select p_num, p_name, p_price, sum(od_cnt) od_cnt ,sum(total) totalsales  from
+		                (select od.p_num , mu.p_name, p_price, od_cnt,(p_price*od_cnt) total
+		                from order1 od
+		                join menu mu
+		                on od.p_num = mu.p_num
+		                where od_time
+		                between to_date('${sdate}','yyyy-mm-dd') and to_date('${edate}','yyyy-mm-dd')+1)            
+		            group by p_num, p_name, p_price)
+		        )
+		    where rownum<![CDATA[<=]]>	${rnChange}
+		    <if test='searchWord!="" and searchWord!=null'> 
+		    and p_name like '%${searchWord}%' 
+		    </if>
+		    order by totalsales asc)
+		where rownum<![CDATA[<=]]> ${onePageRecord} order by totalsales desc
+	</select>
+	<!-- allFran totalrecord -->
+	<select id="totalRecordFranCnt" resultType="int">
+		select count(rank) from
+		    (select rank() over(order by totalsales desc) rank, fc_num, fc_name, fc_addr, totalsales from
+		        (select fc_num, sum(total) totalsales, fc_name, fc_addr from
+		            (select f.fc_num, fc_name, fc_addr, o.od_cnt, p_price, (o.od_cnt*p_price) total
+		                from order1 o
+		                join franchise f
+		                on f.fc_num = o.fc_num
+		                join menu m
+		                on m.p_num = o.p_num
+		                where od_time
+		                between to_date('${sdate}','yyyy-mm-dd') and to_date('${edate}','yyyy-mm-dd')+1)        
+		        group by fc_num, fc_name, fc_addr)
+		    )
+		    <if test='searchWord!="" and searchWord!=null'>
+		    	where fc_name like '%${searchWord}%'
+		    </if>
+	</select>
+	<!-- allFran chartlist -->
+	<select id="franRankList" resultType="com.leaf.myapp.vo.SalesVO">
+		select rank() over(order by totalsales desc) rank, fc_num, fc_name, fc_addr, totalsales from
+	        (select fc_num, sum(total) totalsales, fc_name, fc_addr from
+	            (select f.fc_num, fc_name, fc_addr, o.od_cnt, p_price, (o.od_cnt*p_price) total
+	                from order1 o
+	                join franchise f
+	                on f.fc_num = o.fc_num
+	                join menu m
+	                on m.p_num = o.p_num
+	                where od_time
+	                between to_date('${sdate}','yyyy-mm-dd') and to_date('${edate}','yyyy-mm-dd')+1)        
+	        group by fc_num, fc_name, fc_addr)
+	</select>
+	<!-- allFran pagelist -->
+	<select id="searchFranRankList" resultType="com.leaf.myapp.vo.SalesVO" parameterType="com.leaf.myapp.vo.AdminSalesPageVO">
+		select * from
+		    (select * from
+		        (select rank() over(order by totalsales desc) rank, fc_num, fc_name, fc_addr, totalsales from
+		            (select fc_num, sum(total) totalsales, fc_name, fc_addr from
+		                (select f.fc_num, fc_name, fc_addr, o.od_cnt, p_price, (o.od_cnt*p_price) total
+		                    from order1 o
+		                    join franchise f
+		                    on f.fc_num = o.fc_num
+		                    join menu m
+		                    on m.p_num = o.p_num
+		                    where od_time
+		                    between to_date('${sdate}','yyyy-mm-dd') and to_date('${edate}','yyyy-mm-dd')+1)        
+		            group by fc_num, fc_name, fc_addr)
+		        )
+		     where rownum <![CDATA[<=]]> ${rnChange} 
+		    <if test='searchWord!="" and searchWord!=null'> 
+		    	and fc_name like '%${searchWord}%' 
+		    </if>
+		    order by totalsales asc)
+		where rownum <![CDATA[<=]]> ${onePageRecord} order by totalsales desc   
+	</select>
+	<!-- allSalesCount totalRecord -->	
+	<select id="totalRecordSalesCnt" resultType="int">
+		select count(rank) from
+	    (select rank() over(order by totalcnt desc) rank , p_name, p_price, totalsales, totalcnt from    
+	        (select p_name, p_price, sum(total) totalsales , sum(od_cnt) totalcnt from
+	            (select p_name, od_cnt, p_price, (od_cnt*p_price) total from order1 o
+	            join menu m
+	            on o.p_num = m.p_num
+	            where od_time
+	            between to_date('${sdate}','yyyy-mm-dd') and to_date('${edate}','yyyy-mm-dd')+1) 
+	        group by p_name, p_price) 
+	    order by rank)
+	    <if test='searchWord!="" and searchWord!=null'>
+		   	where p_name like '%${searchWord}%'
+		</if>    
+	</select>
+	<!-- allSalesCount chartlist -->
+	<select id="salesRankList" resultType="com.leaf.myapp.vo.SalesVO">
+		select rank() over(order by totalcnt desc) rank , p_name, p_price, totalsales, totalcnt from    
+	        (select p_name, p_price, sum(total) totalsales , sum(od_cnt) totalcnt from
+	            (select p_name, od_cnt, p_price, (od_cnt*p_price) total from order1 o
+	            join menu m
+	            on o.p_num = m.p_num
+	            where od_time
+	            between to_date('${sdate}','yyyy-mm-dd') and to_date('${edate}','yyyy-mm-dd')+1) 
+	        group by p_name, p_price) 
+	    order by rank 
+	</select>
+	<!-- buycnt pagelist -->
+	<select id="searchSalesRankList" resultType="com.leaf.myapp.vo.SalesVO" parameterType="com.leaf.myapp.vo.AdminSalesPageVO">
+		select * from    
+		    (select * from        
+		            (select rank() over(order by totalcnt desc) rank , p_name, p_price, totalsales, totalcnt from    
+		                (select p_name, p_price, sum(total) totalsales , sum(od_cnt) totalcnt from
+		                    (select p_name, od_cnt, p_price, (od_cnt*p_price) total from order1 o
+		                    join menu m
+		                    on o.p_num = m.p_num
+		                    where od_time
+		                    between to_date('20211001','yyyymmdd') and to_date('20211021','yyyymmdd')+1) 
+		                group by p_name, p_price) 
+		            order by rank)
+		     where rownum <![CDATA[<=]]> ${rnChange}
+		     <if test='searchWord!="" and searchWord!=null'> 
+		    	and p_name like '%${searchWord}%' 
+		     </if>		      
+		     order by totalcnt asc)
+		where rownum <![CDATA[<=]]> ${onePageRecord} order by totalcnt desc  
+	</select>
+</mapper>  

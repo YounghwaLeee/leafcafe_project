@@ -1,0 +1,57 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<style>
+footer{background:#222; display:grid;height:400px;}
+.footer-body{width: 1200px; text-align:center; margin:0 auto;}
+.footer-center{margin-top: 50px;padding-top: 50px; border-top: 1px solid rgba(255,255,255,0.15); transition: all .3s cubic-bezier(0.16, 0.04, 0.03, 0.95);}
+.footer-center-float{float: none !important;}
+.footer-menu{margin-bottom: 20px; transition: all .3s cubic-bezier(0.16, 0.04, 0.03, 0.95);}
+.footer-menu> ul{list-style-position: inside;}
+.footer-menu li{display: inline-block; margin-right: 40px; transition: all .3s cubic-bezier(0.16, 0.04, 0.03, 0.95);}
+.footer-menu a{font-size: 14px; font-weight: 600; color: #fff; transition: all .3s cubic-bezier(0.16, 0.04, 0.03, 0.95);}
+.footer-info{font-size: 14px; font-weight: 400; color: #777; transition: all .3s cubic-bezier(0.16, 0.04, 0.03, 0.95); margin-top:50px;}
+.footer-info> ul{margin-bottom: 8px; transition: all .3s cubic-bezier(0.16, 0.04, 0.03, 0.95);}
+.footer-info li{display: inline-block; color:#999;}
+.footer-info li:before{content: ''; display: inline-block; width: 1px; height: 11px; border-left: 1px solid #777; line-height: 1;
+    margin-left: 12px;margin-right: 12px;}
+.footer-company{display: block; margin-top: 40px; font-family: 'Mark Pro';font-size: 12px;font-weight: 400;color: #777;transition: all .3s cubic-bezier(0.16, 0.04, 0.03, 0.95);}
+.footer-company>span{display: inline-block; margin-right: 4px; transition: all .3s cubic-bezier(0.16, 0.04, 0.03, 0.95); color:#999;}
+</style>
+    <footer>
+    	<div class="footer-body">
+    		<div class="footer-center">
+    			<div class="footer-center-float">
+	    			<div class="footer-menu">
+	    				<ul>
+	    					<li><a href="#">이용약관</a></li>
+	    					<li><a href="#">개인정보처리방침</a></li>
+	    					<li><a href="#">위치기반서비스 이용약관</a></li>
+	    					<li><a href="#">이메일 무단수집거부</a></li>
+	    					<li><a href="#">법적고지</a></li>
+	    					<li><a href="#">사업자정보확인</a></li>
+	    				</ul>
+	    			</div>
+	    			<div class="footer-info">	
+	    				<ul>
+	    					<li> 대표이사 : 박동현 </li>
+	    					<li> 개인정보보호책임자 : 박동현 </li>
+	    					<li> 사업자등록번호 : 301-95-01219 </li>
+	    				</ul>
+	    				<ul>
+	    					<li> 통신판매업종신고증 : 제 2021-서울마포구-1102호</li>
+	    					<li> 대표이메일 : bukdonghyun@leaf.co.kr </li>
+	    				</ul>
+	    				<ul>
+	    					<li> 홈페이지 오류 문의 : 010-7192-1311</li>
+	    				</ul>
+	    			</div>
+	    			<div class="footer-company">
+	    				<span>Copyright &copy; 2021 C LEAF COFFEE Corp.</span>
+	    				<span>All Right Reserved.</span>
+	    			</div>
+	    		</div>	
+    		</div>
+    	</div>
+    </footer>
+   	
+</body>
+</html>

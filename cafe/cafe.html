@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>suyeong Bassett</title>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+	integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="jquery.easing.1.3.js" /></script>
+<script src="jquery.bxslider.js"></script>
+<script src="jquery.innerfade.js"></script>
+<link rel="stylesheet" href="jquery.bxslider.css" type="text/css" />
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+	integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
+	crossorigin="anonymous">
+<style>
+a:link, a:hover, a:visited {
+	text-decoration: none;
+	color: gray;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #ddd;
+}
+
+li, ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+#wrapper {
+	width: auto;
+	margin: 0 auto;
+}
+
+#header {
+	height: 130px;
+	background-color: #000;
+}
+#logo>img{
+	width:120px;
+	height:50px;
+	margin-left:47%;
+	margin-top:25px;
+	position:absolute;
+}
+
+.topbar {
+	margin-left: 1300px;
+}
+
+.topbar>ul>li {
+	float: left;
+	font-size: 0.9em;
+	margin-top: 30px;
+	margin-left: 15px;
+}
+
+.title {
+	float: left;
+	height: 50px;
+	line-height: 50px;
+	width: 15%;
+	text-align: center;
+	margin-top: 30px;
+}
+
+.title>ul {
+	position: relative;
+	z-index: 10;
+	background-color: #000;
+	display: none;
+}
+
+img {
+	width: 1700px;
+	height: 780px;
+}
+
+.bx-wrapper {
+	border: none;
+}
+
+#main1_imgSlider_Txt>li {
+	position: absolute;
+	z-index: 10;
+	top: -300px;
+	font-size: 4em;
+	color: #fff;
+	margin-left: 200px;
+}
+
+#notice {
+	width: 300px;
+	height: 50px;
+	background-color: rgb(53, 52, 52);
+	margin-left: 1300px;
+	margin-top: 78px;
+	position: absolute;
+}
+
+#notice_text {
+	margin-left: 20px;
+	line-height: 50px;
+	color: white;
+}
+
+#notice_content>li {
+	position: absolute;
+	z-index: 10;
+	top: -36px;
+	margin-left: 100px;
+	color: #fff;
+}
+.fa-chevron-down {
+	position: absolute;
+	color: white;
+	top: 20px;
+	margin-left:260px;
+}
+
+.menu_item:hover {
+	background-color: rgb(191, 21, 77);
+	font-weight: bold;
+}
+
+/*.title:hover {
+	font-weight: bold;
+}
+ 
+background-image: url(/img/); 
+background-size: contain;
+*/
+</style>
+<script>
+	$(function() {
+		// 메뉴바 나오기
+		$(".title").on({
+			mouseenter : function() {
+				$(this).children('ul').css('display', 'block').css('border-top','3px solid rgb(191, 21, 77)');
+			},
+			mouseleave : function() {
+				$(this).children('ul').css('display', 'none');
+			}
+		});
+
+		//슬라이드 이미지 나오기
+		$("#main1_imgSlider").bxSlider({
+			mode : 'horizontal',
+			slideWidth : 1700,
+			slideHeight : 500,
+			speed : 2000,
+			auto : true//자동시작
+			,
+			infiniteLoop : true
+		//반복
+		//,effect:'easeOutBounce'
+		});
+		//이미지 설명
+		$('#main1_imgSlider_Txt').innerfade({
+			animationtype : 'slide',
+			speed : 2000,
+			timeout : 5000
+		});
+		// 공지사항
+		$('#notice_content').innerfade({
+			animationtype : 'slide',
+			speed : 2000,
+			timeout : 5000
+		});
+		
+		$('.menu_item').on({
+			mouseenter: function() {
+				$(this).children().css('color', 'white');
+			},
+			mouseleave: function() {
+				$(this).children().css('color', 'grey');
+			}
+		});
+		$('.title').on({
+			mouseenter: function() {
+				$(this).children().css('color', 'white');
+			},
+			mouseleave: function() {
+				$(this).children().css('color', 'grey');
+			}
+		});
+
+	});
+</script>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="header">
+			<div id="logo">
+				<img src="img/crown.png"/>			
+			</div>
+			<div class="topbar">
+				<ul>
+					<li><a href="#">Login</a></li>
+					<li><a href="#">Join</a></li>
+					<li><a href="#">Contact us</a></li>
+					<li><a href="#">Recruit</a></li>
+					<li><a href="#">FAQ</a></li>
+				</ul>
+			</div>
+			<div id="menu">
+				<ul>
+					<li class="title"><a href="#">ABOUT US</a>
+						<ul>
+							<li class="menu_item"><a href="#">Brand</a></li>
+							<li class="menu_item"><a href="#">회사소개</a></li>
+							<li class="menu_item"><a href="#">CSR</a></li>
+						</ul></li>
+					<li class="title"><a href="#">MENU</a>
+						<ul>
+							<li class="menu_item"><a href="#">NEW</a></li>
+							<li class="menu_item"><a href="#">COFFEE</a></li>
+							<li class="menu_item"><a href="#">BEVERAGE</a></li>
+							<li class="menu_item"><a href="#">ICE-CREAM</a></li>
+							<li class="menu_item"><a href="#">FOOD</a></li>
+							<li class="menu_item"><a href="#">PRODUCT</a></li>
+						</ul></li>
+					<li class="title"><a href="#">STORE</a>
+						<ul>
+							<li class="menu_item"><a href="#">매장찾기</a></li>
+						</ul></li>
+					<li class="title"><a href="#">SOCIETY</a>
+						<ul>
+							<li class="menu_item"><a href="#">Society</a></li>
+							<li class="menu_item"><a href="#">회원 등급 혜택</a></li>
+							<li class="menu_item"><a href="#">e-Card 선물</a></li>
+							<li class="menu_item"><a href="#">모바일 App 안내</a></li>
+							<li class="menu_item"><a href="#">제휴혜택 안내</a></li>
+						</ul></li>
+					<li class="title"><a href="#">WHAT'S NEW</a>
+						<ul>
+							<li class="menu_item"><a href="#">Event / News</a></li>
+							<li class="menu_item"><a href="#">Coffee Class</a></li>
+							<li class="menu_item"><a href="#">Notice</a></li>
+						</ul></li>
+				</ul>
+			</div>
+			<div id="notice">
+				<div id="notice_text">notice</div>
+
+				<div>
+					<ul id="notice_content">
+						<li><a href="">notice</a></li>
+						<li><a href="">suyeongBassett</a></li>
+						<li><a href="">notice notice notice</a></li>
+					</ul>
+				</div>
+				<i class="fas fa-chevron-down"></i>
+			</div>
+		</div>
+		<!-- header -->
+		<div id="main1">
+			<ul id="main1_imgSlider">
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee1.jpg"></a></li>
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee2.jpg"></a></li>
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee3.jpg"></a></li>
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee5.jpg"></a></li>
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee6.jpg"></a></li>
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee7.jpg"></a></li>
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee8.jpg"></a></li>
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee9.jpg"></a></li>
+				<li><a href="https://www.baristapaulbassett.co.kr/Index.pb"><img
+						src="img/coffee10.jpg"></a></li>
+			</ul>
+		</div>
+		<div>
+			<ul id="main1_imgSlider_Txt">
+				<li>메뉴 설명</li>
+				<li>new menu </li>
+				<li>hot menu </li>
+				<li>나와라이제~~</li>
+				<li>오바바바바바</li>
+				<li>네 저는 라떼를 좋아해요</li>
+				<li>커피는 사랑입니다</li>
+				<li>허허허허 참</li>
+				<li>끝입니다요</li>
+			</ul>
+		</div>
+	</div>
+	<!-- wrapper -->
+
+</body>
+</html>
