@@ -41,13 +41,11 @@ Version Control : Git
 ![구현화면1](https://user-images.githubusercontent.com/89582828/141679462-cc0a93b9-942b-401f-9050-9abef6733b06.PNG)
 ![구현화면2](https://user-images.githubusercontent.com/89582828/141679464-44aaf620-0a39-43f2-932c-eccb0da68697.PNG)
 ![매장선택](https://user-images.githubusercontent.com/89582828/141679465-01679eb8-5a4b-4451-948c-2b37993bebc8.PNG)
-![가맹점페이지공지사항](https://user-images.githubusercontent.com/89582828/141679466-a694981f-30ab-4764-8b3b-4362ae2c6e9d.PNG)
+![가맹점](https://user-images.githubusercontent.com/89582828/141679660-c57691d8-c3ee-4620-850f-efc2939945bd.PNG)
 
 
 
-
-
-# 📒 API 
+## 📒 API 
 - summer note
 - kakao developers
 - naver developers
