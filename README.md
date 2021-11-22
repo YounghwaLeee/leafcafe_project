@@ -58,3 +58,6 @@ Version Control : Git
 
 ## 📕 구현화면
   포트폴리오.pdf를 확인해주세요.
+
+## 발표영상
+https://www.youtube.com/watch?v=RN_57__vnU8
